@@ -16,11 +16,14 @@
 
     <script>
         document.getElementById('sumForm').addEventListener('submit', function(event) {
+            // Prevenir el envío normal del formulario
             event.preventDefault();
 
+            // Capturar los valores de los inputs
             const num1 = parseFloat(document.getElementById('num1').value);
             const num2 = parseFloat(document.getElementById('num2').value);
 
+            // Enviar los datos al backend Flask usando fetch
             fetch('http://127.0.0.1:5000/sumar', {
                 method: 'POST',
                 headers: {
@@ -28,11 +31,16 @@
                 },
                 body: JSON.stringify({ num1: num1, num2: num2 })
             })
-            .then(response => response.json())
+            .then(response => response.json())  // Convertir la respuesta a JSON
             .then(data => {
+                // Mostrar el resultado en el frontend
                 document.getElementById('resultado').textContent = data.resultado;
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                // Manejar cualquier error
+                console.error('Error:', error);
+                document.getElementById('resultado').textContent = 'Error al realizar la suma';
+            });
         });
     </script>
 </body>
