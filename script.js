@@ -1,3 +1,4 @@
+
 // Variable global para rastrear el modo actual
 let modo_horas = true;
 

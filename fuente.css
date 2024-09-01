@@ -1,0 +1,7 @@
+.centered-text {
+    display: flex;             /* Utiliza Flexbox */
+    justify-content: center;   /* Centra horizontalmente */
+    align-items: center;       /* Centra verticalmente */
+    height: 10vh;             /* Altura del contenedor igual a la altura de la ventana */
+    text-align: center;        /* Asegura que el texto esté centrado en caso de múltiples líneas */
+}

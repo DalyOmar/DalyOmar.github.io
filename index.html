@@ -7,8 +7,12 @@
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulación de MRUV</title>
+    <div class="centered-text">
+        <h1>Simulación de MRUV</h1>
+    </div>
     <link rel="stylesheet" href="marco.css">
+    <link rel="stylesheet" href="boton.css">
+    <link rel="stylesheet" href="fuente.css">
     <style type="text/css">
         
         body {
@@ -77,9 +81,8 @@
             position: absolute;
             bottom: calc(10rem + 90px);
             left: 45%;
-            
             transform: translateX(-50%);
-            transform: translateY(-300%);;
+            transform: translateY(-500%);;
             font-size: 18px;
             background-color: rgba(0, 0, 0, 0.5);
             color: white;
@@ -106,7 +109,7 @@
     </style>
 </head>
 <body>
-
+    
     <h2>Simulación de Movimiento</h2>
     <!-- Menú desplegable para seleccionar el cálculo -->
     <label for="opcion_calculo">Seleccione un cálculo:</label>
@@ -117,7 +120,7 @@
         <option value="Velocidad Inicial">Velocidad Inicial</option>
         <option value="Distancia">Distancia (Utilizar datos de distancia)</option>
     </select>
-
+    
 <div class="container">
         <!-- Panel de controles a la izquierda -->
         <div id="miCanvas">
@@ -152,7 +155,7 @@
     </div>
     <!-- Div para mostrar el resultado -->
     <div id="resultado"></div>
-
+    
     <py-script>
         from js import document, window
         from pyodide import create_proxy
@@ -512,6 +515,7 @@
         // Llama a la función después de que la página y PyScript hayan cargado
         window.addEventListener('load', aplicarEstilosBotones);
     </script>
-    </div>        
+    </div>
+            
 </body>
 </html>
