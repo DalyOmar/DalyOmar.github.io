@@ -1,0 +1,153 @@
+/* Estilos globales para el cuerpo */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-y: auto; /* Permite el desplazamiento vertical */
+    overflow-x: hidden; /* Evita el desplazamiento horizontal */
+    max-width: 100%; /* Asegura que no se expanda más allá del 100% */
+    box-sizing: border-box; /* Incluye padding y borde en el tamaño total del elemento */
+    font-family: Arial, sans-serif; /* Establece una fuente base */
+    background: #181818;
+    color: #f0f0f0;
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%; /* Asegura que el contenedor no exceda el 100% del ancho de la pantalla */
+    margin: 0 auto;
+    padding: 10px 20px; /* Añade padding con espacio a los lados */
+    box-sizing: border-box;
+}
+
+/* Simulación */
+#simulacion {
+    width: 100%; /* Haz que #simulacion se ajuste al 100% del contenedor */
+    max-width: 1500px; /* Ancho máximo para pantallas grandes */
+    aspect-ratio: 5 / 1; /* Mantiene una relación de aspecto 5:1 */
+    border: 2px solid black;
+    position: relative;
+    margin-top: 20px;
+    background-color: #f0f0f0;
+    overflow: hidden;
+    box-sizing: border-box; /* Incluye padding y bordes en el ancho */
+    
+}
+
+/* Objeto en la simulación */
+#objeto {
+    width: 30px; /* Ajusta el tamaño del GIF (ancho) */
+    height: 30px; /* Ajusta el tamaño del GIF (alto) */
+    position: absolute;
+    left: 0;
+    top: 50%; /* Centra verticalmente dentro del contenedor */
+    transform: translateY(-50%); /* Centra el objeto verticalmente */
+    transition: left 1s ease; /* Hace que el movimiento sea suave */
+}
+
+
+
+/* Botones y textos */
+button {
+    padding: 0.5em 1em;
+    width: 100%; /* Haz que los botones ocupen el 100% del contenedor */
+    max-width: 13em; /* Máximo ancho para evitar que crezca demasiado */
+    height: auto; /* Ajuste automático de altura */
+    background-color: #212121;
+    border: 0.08em solid #fff;
+    border-radius: 0.3em;
+    font-size: 1rem; /* Usa rem para una fuente escalable */
+    color: #fff;
+    box-sizing: border-box;
+    margin-bottom: 10px; /* Espacio inferior entre botones */
+}
+
+button span {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: #212121;
+    border-radius: 0.2em;
+    font-size: 1rem;
+    color: #fff;
+    border: 0.08em solid #fff;
+    box-shadow: 0 0.4em 0.1em #fff;
+    padding: 0.5em 0; /* Añade un padding interno para mejor aspecto */
+}
+
+button span:hover {
+    transition: all 0.5s;
+    transform: translate(0, 0.4em);
+    box-shadow: 0 0.4em 0.1em #fff;
+}
+
+.button-custom {
+    padding: 0.5em 1em;
+    width: 13em;
+    height: auto;
+    background-color: #212121;
+    border: 0.08em solid #fff;
+    border-radius: 0.3em;
+    font-size: 1rem;
+    color: #fff;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.button-span-custom {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: #212121;
+    border-radius: 0.2em;
+    font-size: 1rem;
+    color: #fff;
+    border: 0.08em solid #fff;
+    box-shadow: 0 0.4em 0.1em #fff;
+    padding: 0.5em 0;
+}
+
+.button-span-custom:hover {
+    transition: all 0.5s;
+    transform: translate(0, 0.4em);
+    box-shadow: 0 0.4em 0.1em #fff;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    #simulacion {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 5 / 1; /* Mantiene la relación de aspecto en móviles */
+    }
+
+    button {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    p, h2 {
+        font-size: 1rem;
+        line-height: 1.5;
+        padding: 0 10px;
+    }
+}
+
+/* Pausar animación del GIF por defecto */
+#objeto {
+    animation-play-state: paused;
+}
+
+/* Reproducir animación del GIF cuando se añada esta clase */
+.play-animation {
+    animation-play-state: running;
+}
+
+
