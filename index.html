@@ -609,8 +609,14 @@ function generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distanci
     });
 
     // Gráfica de Posición vs Tiempo
-    const tiemposPosicion = [0, tiempo_total];
-    const posiciones = [0, distancia];
+    const tiemposPosicion = [];
+    const posiciones = [];
+
+    for (let t = 0; t <= tiempo_total; t += tiempo_total / 20) {
+        tiemposPosicion.push(t);
+        // Aquí usamos una función exponencial simple para simular la tendencia
+        posiciones.push(Math.exp(t)); // Suponemos una función de tipo y = e^t para ejemplo
+    }
 
     new Chart(ctxPosicion, {
         type: 'line',
@@ -622,7 +628,7 @@ function generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distanci
                 borderColor: 'red',
                 borderWidth: 2,
                 fill: false,
-                tension: 0.4 // Línea curva para representar la tendencia exponencial
+                tension: 0 // Línea recta o ajustada
             }]
         },
         options: {
@@ -641,7 +647,8 @@ function generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distanci
                         text: 'Posición'
                     },
                     suggestedMin: 0,
-                    suggestedMax: distancia
+                    // Puedes ajustar el máximo según la función específica que estás modelando
+                    suggestedMax: Math.exp(tiempo_total) 
                 }
             }
         }
