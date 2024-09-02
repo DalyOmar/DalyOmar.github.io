@@ -1,640 +1,687 @@
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <script defer src="script.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <div class="centered-text">
-            <h1>Simulación de MRUV</h1>
-        </div>
-        <link rel="stylesheet" href="marco.css">
-        <link rel="stylesheet" href="boton.css">
-        <link rel="stylesheet" href="fuente.css">
-        <style type="text/css">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script defer src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div class="centered-text">
+        <h1>Simulación de MRUV</h1>
+    </div>
+    <link rel="stylesheet" href="marco.css">
+    <link rel="stylesheet" href="boton.css">
+    <link rel="stylesheet" href="fuente.css">
+    <style type="text/css">
+        
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 4fr; /* La primera columna ocupa 1/5 y la segunda 4/5 del espacio */
+            grid-template-rows: auto 400px; /* La primera fila ajusta su tamaño automáticamente, la segunda tiene una altura fija de 400px */
+            gap: 20px; /* Espacio entre columnas y filas */
+            padding: 20px;
+            height: 100vh; /* Ocupa toda la altura de la ventana */
+        }
+
+        #miCanvas {
             
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-            }
-
-            .container {
-                display: grid;
-                grid-template-columns: 1fr 4fr; /* La primera columna ocupa 1/5 y la segunda 4/5 del espacio */
-                grid-template-rows: auto 400px; /* La primera fila ajusta su tamaño automáticamente, la segunda tiene una altura fija de 400px */
-                gap: 20px; /* Espacio entre columnas y filas */
-                padding: 20px;
-                height: 100vh; /* Ocupa toda la altura de la ventana */
-            }
-
-            #miCanvas {
-                
-                border: 1px solid black;
-                background: black;
-                padding: 50px;
-                color: white; /* Para que el texto sea visible sobre el fondo negro */
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-
-            #simulacion {
-                width: 100%;
-                height: 100%;
-                border: 2px solid black;
-                position: relative;
-                background-color: #e5e5f7;
-                opacity: 0.8;
-                background-image:  linear-gradient(#a4a4a5 2px, transparent 2px), linear-gradient(90deg, #a4a4a5 2px, transparent 2px), linear-gradient(#a4a4a5 1px, transparent 1px), linear-gradient(90deg, #a4a4a5 1px, #e5e5f7 1px);
-                background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
-                background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
-                overflow: hidden;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                
-            }
-
-            .chart-container {
-            width: 30%;
+            border: 1px solid black;
+            background: black;
+            padding: 50px;
+            color: white; /* Para que el texto sea visible sobre el fondo negro */
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #simulacion {
+            width: 100%;
+            height: 100%;
+            border: 2px solid black;
+            position: relative;
+            background-color: #e5e5f7;
+            opacity: 0.8;
+            background-image:  linear-gradient(#a4a4a5 2px, transparent 2px), linear-gradient(90deg, #a4a4a5 2px, transparent 2px), linear-gradient(#a4a4a5 1px, transparent 1px), linear-gradient(90deg, #a4a4a5 1px, #e5e5f7 1px);
+            background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+            background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             
         }
 
-            canvas {
-                width: 100%;
-                border: 1px solid black;
-                background: gray;
-                margin: 20px;
-            }
-            #objeto {
-                width: 120px;
-                height: 87px;
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                top: 10rem;
-                transition: left 1s ease;
-            }
-            #contador {
-                position: absolute;
-                bottom: calc(10rem + 90px);
-                left: 45%;
-                transform: translateX(-50%);
-                transform: translateY(-500%);;
-                font-size: 18px;
-                background-color: rgba(0, 0, 0, 0.5);
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-            }
-            .content {
-                margin-top: 20px;
-            }
-            .button-custom {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                cursor: pointer;
-            }
-            .button-custom:hover {
-                background-color: #45a049;
-            }
-        </style>
-    </head>
-    <body>
+        .chart-container {
+        width: 30%;
+        display: flex;
+        justify-content: space-around;
         
-        <h2>Simulación de Movimiento</h2>
-        <!-- Menú desplegable para seleccionar el cálculo -->
-        <label for="opcion_calculo">Seleccione un cálculo:</label>
-        <select id="opcion_calculo">
-            <option value="Tiempo">Tiempo</option>
-            <option value="Aceleración">Aceleración</option>
-            <option value="Velocidad Final">Velocidad Final</option>
-            <option value="Velocidad Inicial">Velocidad Inicial</option>
-            <option value="Distancia">Distancia (Utilizar datos de distancia)</option>
-        </select>
-        
-    <div class="container">
-            <!-- Panel de controles a la izquierda -->
-            <div id="miCanvas">
-                <button id="btn_cambiar_modo" class="button-custom"><span class="button-span-custom">Cambiar a Segundos</span></button>
+    }
 
-                <p id="label_vinicial">Velocidad Inicial (km/h):</p>
-                <input type="text" id="entry_vinicial" disabled>
+        canvas {
+            width: 100%;
+            border: 1px solid black;
+            background: gray;
+            margin: 20px;
+        }
+        #objeto {
+            width: 120px;
+            height: 87px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 10rem;
+            transition: left 1s ease;
+        }
+        #contador {
+            position: absolute;
+            bottom: calc(10rem + 90px);
+            left: 45%;
+            transform: translateX(-50%);
+            transform: translateY(-500%);;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .button-custom {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .button-custom:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    
+    <h2>Simulación de Movimiento</h2>
+    <!-- Menú desplegable para seleccionar el cálculo -->
+    <label for="opcion_calculo">Seleccione un cálculo:</label>
+    <select id="opcion_calculo">
+        <option value="Tiempo">Tiempo</option>
+        <option value="Aceleración">Aceleración</option>
+        <option value="Velocidad Final">Velocidad Final</option>
+        <option value="Velocidad Inicial">Velocidad Inicial</option>
+        <option value="Distancia">Distancia (Utilizar datos de distancia)</option>
+    </select>
+    
+<div class="container">
+        <!-- Panel de controles a la izquierda -->
+        <div id="miCanvas">
+            <button id="btn_cambiar_modo" class="button-custom"><span class="button-span-custom">Cambiar a Segundos</span></button>
 
-                <p id="label_vfinal">Velocidad Final (km/h):</p>
-                <input type="text" id="entry_vfinal" disabled>
+            <p id="label_vinicial">Velocidad Inicial (km/h):</p>
+            <input type="text" id="entry_vinicial" disabled>
 
-                <p id="label_aceleracion">Aceleración (km/h²):</p>
-                <input type="text" id="entry_aceleracion" disabled>
+            <p id="label_vfinal">Velocidad Final (km/h):</p>
+            <input type="text" id="entry_vfinal" disabled>
 
-                <p id="label_tiempo">Tiempo (horas):</p>
-                <input type="text" id="entry_tiempo" disabled>
+            <p id="label_aceleracion">Aceleración (km/h²):</p>
+            <input type="text" id="entry_aceleracion" disabled>
 
-                <p id="label_distancia" style="display:none;">Distancia (km):</p>
-                <input type="text" id="entry_distancia" style="display:none;" disabled>
+            <p id="label_tiempo">Tiempo (horas):</p>
+            <input type="text" id="entry_tiempo" disabled>
 
-                <div class="content">
-                    <button id="btn_simular" disabled><span>Iniciar Simulación</span></button>
-                </div>
-            </div>
+            <p id="label_distancia" style="display:none;">Distancia (km):</p>
+            <input type="text" id="entry_distancia" style="display:none;" disabled>
 
-            <!-- Área de simulación y gráficas -->
-            <div id="simulacion">
-                <div id="contador">0 px</div>
-                <img id="objeto" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXdkaThyeDRtMTUwMTY1ZzdsbXlhc2ZxdWh2bnF0bWFmbzVnN2wxbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/zIhJOfL80M3fp11RX6/giphy.gif" alt="GIF Animado">
-                
+            <div class="content">
+                <button id="btn_simular" disabled><span>Iniciar Simulación</span></button>
             </div>
         </div>
-        <!-- Div para mostrar el resultado -->
-        <div id="resultado"></div>
-        <div class="chart-container">
-            <canvas id="chartPosicion"></canvas>
-            <canvas id="chartVelocidad"></canvas>
-            <canvas id="chartAceleracion"></canvas>
+
+        <!-- Área de simulación y gráficas -->
+        <div id="simulacion">
+            <div id="contador">0 px</div>
+            <img id="objeto" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXdkaThyeDRtMTUwMTY1ZzdsbXlhc2ZxdWh2bnF0bWFmbzVnN2wxbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/zIhJOfL80M3fp11RX6/giphy.gif" alt="GIF Animado">
+            
         </div>
-        <py-script>
-            from js import document, window
-            from pyodide import create_proxy
+    </div>
+    <!-- Div para mostrar el resultado -->
+    <div id="resultado"></div>
+    <div class="chart-container">
+        <canvas id="chartPosicion"></canvas>
+        <canvas id="chartVelocidad"></canvas>
+        <canvas id="chartAceleracion"></canvas>
+    </div>
+    <py-script>
+        from js import document, window
+        from pyodide import create_proxy
 
-            # Variable global para rastrear el modo actual
-            modo_horas = True
+        # Variable global para rastrear el modo actual
+        modo_horas = True
 
-            # Función para cambiar el modo entre horas y segundos
-            def cambiar_modo(event=None):
-                global modo_horas
-                modo_horas = not modo_horas
-                actualizar_interfaz()
-
-            # Actualizar la interfaz de usuario según el modo seleccionado
-            def actualizar_interfaz():
-                if modo_horas:
-                    document.getElementById("btn_cambiar_modo").innerText = "Cambiar a Segundos"
-                    document.getElementById("label_vinicial").innerText = "Velocidad Inicial (km/h):"
-                    document.getElementById("label_vfinal").innerText = "Velocidad Final (km/h):"
-                    document.getElementById("label_aceleracion").innerText = "Aceleración (km/h²):"
-                    document.getElementById("label_tiempo").innerText = "Tiempo (horas):"
-                    document.getElementById("label_distancia").innerText = "Distancia (km):"
-                else:
-                    document.getElementById("btn_cambiar_modo").innerText = "Cambiar a Horas"
-                    document.getElementById("label_vinicial").innerText = "Velocidad Inicial (m/s):"
-                    document.getElementById("label_vfinal").innerText = "Velocidad Final (m/s):"
-                    document.getElementById("label_aceleracion").innerText = "Aceleración (m/s²):"
-                    document.getElementById("label_tiempo").innerText = "Tiempo (segundos):"
-                    document.getElementById("label_distancia").innerText = "Distancia (m):"
-                actualizar_campos(None)
-                # Reaplicar clases
-                btn_cambiar_modo = document.getElementById('btn_cambiar_modo')
-                btn_cambiar_modo.className = "button-custom"
-
-                btn_simular = document.getElementById('btn_simular')
-                btn_simular.className = "button-custom"
-            
-                
-            # Función para desactivar y limpiar todos los campos de entrada
-            def desactivar_todos():
-                document.getElementById("entry_vinicial").disabled = True
-                document.getElementById("entry_vfinal").disabled = True
-                document.getElementById("entry_aceleracion").disabled = True
-                document.getElementById("entry_tiempo").disabled = True
-                document.getElementById("entry_distancia").disabled = True
-                document.getElementById("entry_vinicial").value = ""
-                document.getElementById("entry_vfinal").value = ""
-                document.getElementById("entry_aceleracion").value = ""
-                document.getElementById("entry_tiempo").value = ""
-                document.getElementById("entry_distancia").value = ""
-                document.getElementById("resultado").innerText = ""
-                document.getElementById("label_distancia").style.display = "none"
-                document.getElementById("entry_distancia").style.display = "none"
-                document.getElementById("btn_simular").disabled = True
-
-            # Actualizar los campos según la selección
-            def actualizar_campos(event=None):
-                desactivar_todos()
-                calculo_seleccionado = document.getElementById("opcion_calculo").value
-                window.resetearObjeto()  # Resetea el objeto al centro cuando se cambia la opción
-                if calculo_seleccionado == "Tiempo":
-                    document.getElementById("entry_vinicial").disabled = False
-                    document.getElementById("entry_vfinal").disabled = False
-                    document.getElementById("entry_aceleracion").disabled = False
-                    document.getElementById("btn_simular").disabled = False
-                    document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_tiempo())
-                elif calculo_seleccionado == "Aceleración":
-                    document.getElementById("entry_vinicial").disabled = False
-                    document.getElementById("entry_vfinal").disabled = False
-                    document.getElementById("entry_tiempo").disabled = False
-                    document.getElementById("btn_simular").disabled = False
-                    document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_aceleracion())
-                elif calculo_seleccionado == "Velocidad Final":
-                    document.getElementById("entry_vinicial").disabled = False
-                    document.getElementById("entry_tiempo").disabled = False
-                    document.getElementById("entry_aceleracion").disabled = False
-                    document.getElementById("btn_simular").disabled = False
-                    document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_vfinal())
-                elif calculo_seleccionado == "Velocidad Inicial":
-                    document.getElementById("entry_vfinal").disabled = False
-                    document.getElementById("entry_tiempo").disabled = False
-                    document.getElementById("entry_aceleracion").disabled = False
-                    document.getElementById("btn_simular").disabled = False
-                    document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_vinicial())
-                elif calculo_seleccionado == "Distancia":
-                    document.getElementById("entry_vinicial").disabled = False
-                    document.getElementById("entry_vfinal").disabled = False
-                    document.getElementById("entry_aceleracion").disabled = False
-                    document.getElementById("entry_tiempo").disabled = False
-                    document.getElementById("label_distancia").style.display = "block"
-                    document.getElementById("entry_distancia").style.display = "block"
-                    document.getElementById("entry_distancia").disabled = False
-                    document.getElementById("btn_simular").disabled = False
-                    document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_con_distancia())
-
-            # Funciones para realizar los cálculos y mostrar el resultado
-            def mostrar_resultado(texto):
-                document.getElementById("resultado").innerText = texto
-
-            def convertir_float(valor):
-                try:
-                    return float(valor)
-                except ValueError:
-                    return None
-
-            # Verifica que las velocidades tengan signos coherentes
-            def verificar_signos(v_inicial, v_final):
-                if v_inicial is not None and v_final is not None:
-                    if (v_inicial > 0 and v_final < 0) or (v_inicial < 0 and v_final > 0):
-                        return False
-                return True
-
-            # Definición de las funciones de cálculo
-            def calcular_tiempo(event=None):
-                try:
-                    v_final_str = document.getElementById("entry_vfinal").value
-                    v_inicial_str = document.getElementById("entry_vinicial").value
-                    aceleracion_str = document.getElementById("entry_aceleracion").value
-
-                    # Intentar la conversión a float
-                    v_final = convertir_float(v_final_str)
-                    v_inicial = convertir_float(v_inicial_str)
-                    aceleracion = convertir_float(aceleracion_str)
-
-                    # Verificar si alguna conversión falló
-                    if v_final is None or v_inicial is None or aceleracion is None:
-                        raise ValueError("Valores inválidos")
-                    
-                    # Verificar signos coherentes
-                    if not verificar_signos(v_inicial, v_final):
-                        raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
-                    
-                    # Resetea la posición del GIF
-                    window.resetearObjeto()
-
-                    tiempo = abs((v_final - v_inicial) / aceleracion)
-                    resultado = f"El tiempo necesario es: {tiempo} {'horas' if modo_horas else 'segundos'}"
-
-                    # Calcular distancia
-                    distancia = ((v_inicial + v_final) / 2) * tiempo
-                    resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
-
-                    # Mover el GIF según la distancia (ajustando desde el centro)
-                    distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
-                    window.moverObjeto(distancia_px)
-
-                    mostrar_resultado(resultado)
-                except ValueError:
-                    mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las velocidades tengan el mismo signo.")
-                    
-            def calcular_aceleracion(event=None):
-                try:
-                    v_final_str = document.getElementById("entry_vfinal").value
-                    v_inicial_str = document.getElementById("entry_vinicial").value
-                    tiempo_str = document.getElementById("entry_tiempo").value
-
-                    # Intentar la conversión a float
-                    v_final = convertir_float(v_final_str)
-                    v_inicial = convertir_float(v_inicial_str)
-                    tiempo = convertir_float(tiempo_str)
-
-                    # Verificar si alguna conversión falló
-                    if v_final is None or v_inicial is None or tiempo is None:
-                        raise ValueError("Valores inválidos")
-                    
-                    # Verificar signos coherentes
-                    if not verificar_signos(v_inicial, v_final):
-                        raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
-                    
-                    # Resetea la posición del GIF
-                    window.resetearObjeto()
-
-                    aceleracion = (v_final - v_inicial) / tiempo
-                    resultado = f"La aceleración necesaria es: {aceleracion} {'km/h²' if modo_horas else 'm/s²'}"
-
-                    # Calcular distancia
-                    distancia = ((v_inicial + v_final) / 2) * tiempo
-                    resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
-                    
-                    # Mover el GIF según la distancia (ajustando desde el centro)
-                    distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
-                    window.moverObjeto(distancia_px)
-
-                    mostrar_resultado(resultado)
-                except ValueError:
-                    mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las velocidades tengan el mismo signo.")
-
-            def calcular_vfinal(event=None):
-                try:
-                    v_inicial_str = document.getElementById("entry_vinicial").value
-                    aceleracion_str = document.getElementById("entry_aceleracion").value
-                    tiempo_str = document.getElementById("entry_tiempo").value
-
-                    # Intentar la conversión a float
-                    v_inicial = convertir_float(v_inicial_str)
-                    aceleracion = convertir_float(aceleracion_str)
-                    tiempo = convertir_float(tiempo_str)
-
-                    # Verificar si alguna conversión falló
-                    if v_inicial is None or aceleracion is None or tiempo is None:
-                        raise ValueError("Valores inválidos")
-                    
-                    # Resetea la posición del GIF
-                    window.resetearObjeto()
-
-                    v_final = v_inicial + (aceleracion * tiempo)
-
-                    # Verificar signos coherentes
-                    if not verificar_signos(v_inicial, v_final):
-                        raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
-                    
-                    resultado = f"La velocidad final es: {v_final} {'km/h' if modo_horas else 'm/s'}"
-
-                    # Calcular distancia
-                    distancia = ((v_inicial + v_final) / 2) * tiempo
-                    resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
-                    
-                    # Mover el GIF según la distancia (ajustando desde el centro)
-                    distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
-                    window.moverObjeto(distancia_px)
-
-                    mostrar_resultado(resultado)
-                except ValueError:
-                    mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las entradas sean correctas.")
-
-            def calcular_vinicial(event=None):
-                try:
-                    v_final_str = document.getElementById("entry_vfinal").value
-                    aceleracion_str = document.getElementById("entry_aceleracion").value
-                    tiempo_str = document.getElementById("entry_tiempo").value
-
-                    # Intentar la conversión a float
-                    v_final = convertir_float(v_final_str)
-                    aceleracion = convertir_float(aceleracion_str)
-                    tiempo = convertir_float(tiempo_str)
-
-                    # Verificar si alguna conversión falló
-                    if v_final is None or aceleracion is None or tiempo is None:
-                        raise ValueError("Valores inválidos")
-                    
-                    # Resetea la posición del GIF
-                    window.resetearObjeto()
-
-                    v_inicial = v_final - (aceleracion * tiempo)
-
-                    # Verificar signos coherentes
-                    if not verificar_signos(v_inicial, v_final):
-                        raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
-                    
-                    resultado = f"La velocidad inicial es: {v_inicial} {'km/h' if modo_horas else 'm/s'}"
-
-                    # Calcular distancia
-                    distancia = ((v_inicial + v_final) / 2) * tiempo
-                    resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
-
-                    # Mover el GIF según la distancia (ajustando desde el centro)
-                    distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
-                    window.moverObjeto(distancia_px)
-
-                    mostrar_resultado(resultado)
-                except ValueError:
-                    mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las entradas sean correctas.")
-
-            def calcular_con_distancia(event=None):
-                try:
-                    v_final_str = document.getElementById("entry_vfinal").value
-                    v_inicial_str = document.getElementById("entry_vinicial").value
-                    aceleracion_str = document.getElementById("entry_aceleracion").value
-                    tiempo_str = document.getElementById("entry_tiempo").value
-                    distancia_str = document.getElementById("entry_distancia").value
-
-                    # Intentar la conversión a float
-                    v_final = convertir_float(v_final_str)
-                    v_inicial = convertir_float(v_inicial_str)
-                    aceleracion = convertir_float(aceleracion_str)
-                    tiempo = convertir_float(tiempo_str)
-                    distancia = convertir_float(distancia_str)
-
-                    # Verificar si alguna conversión falló
-                    if distancia is None or (v_inicial is None and v_final is None and aceleracion is None and tiempo is None):
-                        raise ValueError("Se requiere la distancia y al menos otro dato para calcular.")
-
-                    resultado = ""
-                    if tiempo is None:
-                        tiempo = abs((2 * distancia) / (v_inicial + v_final))
-                        resultado += f"Tiempo calculado: {tiempo} {'horas' if modo_horas else 'segundos'}\n"
-                    if aceleracion is None:
-                        aceleracion = (v_final ** 2 - v_inicial ** 2) / (2 * distancia)
-                        resultado += f"Aceleración calculada: {aceleracion} {'km/h²' if modo_horas else 'm/s²'}\n"
-                    if v_final is None:
-                        v_final = (v_inicial ** 2 + 2 * aceleracion * distancia) ** 0.5
-                        resultado += f"Velocidad final calculada: {v_final} {'km/h' if modo_horas else 'm/s'}\n"
-                    if v_inicial is None:
-                        v_inicial = (v_final ** 2 - 2 * aceleracion * distancia) ** 0.5
-                        resultado += f"Velocidad inicial calculada: {v_inicial} {'km/h' if modo_horas else 'm/s'}\n"
-
-                    # Resetea la posición del GIF
-                    window.resetearObjeto()
-
-                    # Mover el GIF según la distancia (ajustando desde el centro)
-                    distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
-                    window.moverObjeto(distancia_px)
-
-                    mostrar_resultado(resultado)
-                except ValueError:
-                    mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las entradas sean correctas.")
-
-            # Crear proxies para los manejadores de eventos
-            cambiar_modo_proxy = create_proxy(cambiar_modo)
-            actualizar_campos_proxy = create_proxy(actualizar_campos)
-
-            # Asignar proxies a los eventos
-            document.getElementById("opcion_calculo").addEventListener("change", actualizar_campos_proxy)
-            document.getElementById("btn_cambiar_modo").addEventListener("click", cambiar_modo_proxy)
-
-            
-            # Inicializar la interfaz
+        # Función para cambiar el modo entre horas y segundos
+        def cambiar_modo(event=None):
+            global modo_horas
+            modo_horas = not modo_horas
             actualizar_interfaz()
+
+        # Actualizar la interfaz de usuario según el modo seleccionado
+        def actualizar_interfaz():
+            if modo_horas:
+                document.getElementById("btn_cambiar_modo").innerText = "Cambiar a Segundos"
+                document.getElementById("label_vinicial").innerText = "Velocidad Inicial (km/h):"
+                document.getElementById("label_vfinal").innerText = "Velocidad Final (km/h):"
+                document.getElementById("label_aceleracion").innerText = "Aceleración (km/h²):"
+                document.getElementById("label_tiempo").innerText = "Tiempo (horas):"
+                document.getElementById("label_distancia").innerText = "Distancia (km):"
+            else:
+                document.getElementById("btn_cambiar_modo").innerText = "Cambiar a Horas"
+                document.getElementById("label_vinicial").innerText = "Velocidad Inicial (m/s):"
+                document.getElementById("label_vfinal").innerText = "Velocidad Final (m/s):"
+                document.getElementById("label_aceleracion").innerText = "Aceleración (m/s²):"
+                document.getElementById("label_tiempo").innerText = "Tiempo (segundos):"
+                document.getElementById("label_distancia").innerText = "Distancia (m):"
+            actualizar_campos(None)
+            # Reaplicar clases
+            btn_cambiar_modo = document.getElementById('btn_cambiar_modo')
+            btn_cambiar_modo.className = "button-custom"
+
+            btn_simular = document.getElementById('btn_simular')
+            btn_simular.className = "button-custom"
+        
             
-        </py-script>
+        # Función para desactivar y limpiar todos los campos de entrada
+        def desactivar_todos():
+            document.getElementById("entry_vinicial").disabled = True
+            document.getElementById("entry_vfinal").disabled = True
+            document.getElementById("entry_aceleracion").disabled = True
+            document.getElementById("entry_tiempo").disabled = True
+            document.getElementById("entry_distancia").disabled = True
+            document.getElementById("entry_vinicial").value = ""
+            document.getElementById("entry_vfinal").value = ""
+            document.getElementById("entry_aceleracion").value = ""
+            document.getElementById("entry_tiempo").value = ""
+            document.getElementById("entry_distancia").value = ""
+            document.getElementById("resultado").innerText = ""
+            document.getElementById("label_distancia").style.display = "none"
+            document.getElementById("entry_distancia").style.display = "none"
+            document.getElementById("btn_simular").disabled = True
 
-        <script>
-            function resetearObjeto() {
-                var objeto = document.getElementById('objeto');
-                objeto.style.left = '50%';
-                objeto.style.transform = 'translateX(-50%)';
-            }
+        # Actualizar los campos según la selección
+        def actualizar_campos(event=None):
+            desactivar_todos()
+            calculo_seleccionado = document.getElementById("opcion_calculo").value
+            window.resetearObjeto()  # Resetea el objeto al centro cuando se cambia la opción
+            if calculo_seleccionado == "Tiempo":
+                document.getElementById("entry_vinicial").disabled = False
+                document.getElementById("entry_vfinal").disabled = False
+                document.getElementById("entry_aceleracion").disabled = False
+                document.getElementById("btn_simular").disabled = False
+                document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_tiempo())
+            elif calculo_seleccionado == "Aceleración":
+                document.getElementById("entry_vinicial").disabled = False
+                document.getElementById("entry_vfinal").disabled = False
+                document.getElementById("entry_tiempo").disabled = False
+                document.getElementById("btn_simular").disabled = False
+                document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_aceleracion())
+            elif calculo_seleccionado == "Velocidad Final":
+                document.getElementById("entry_vinicial").disabled = False
+                document.getElementById("entry_tiempo").disabled = False
+                document.getElementById("entry_aceleracion").disabled = False
+                document.getElementById("btn_simular").disabled = False
+                document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_vfinal())
+            elif calculo_seleccionado == "Velocidad Inicial":
+                document.getElementById("entry_vfinal").disabled = False
+                document.getElementById("entry_tiempo").disabled = False
+                document.getElementById("entry_aceleracion").disabled = False
+                document.getElementById("btn_simular").disabled = False
+                document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_vinicial())
+            elif calculo_seleccionado == "Distancia":
+                document.getElementById("entry_vinicial").disabled = False
+                document.getElementById("entry_vfinal").disabled = False
+                document.getElementById("entry_aceleracion").disabled = False
+                document.getElementById("entry_tiempo").disabled = False
+                document.getElementById("label_distancia").style.display = "block"
+                document.getElementById("entry_distancia").style.display = "block"
+                document.getElementById("entry_distancia").disabled = False
+                document.getElementById("btn_simular").disabled = False
+                document.getElementById("btn_simular").onclick = create_proxy(lambda e: calcular_con_distancia())
 
-            function moverObjeto(distancia) {
-                var objeto = document.getElementById('objeto');
-                // Ajuste desde el centro (origen en el centro)
-                var contenedor = document.getElementById('simulacion');
-                var centro = contenedor.offsetWidth / 2;
-                var nuevaPosicion = centro + distancia;
-                objeto.style.left = nuevaPosicion + 'px';
-            }
-            
-            function aplicarEstilosBotones() {
-            const btnCambiarModo = document.getElementById('btn_cambiar_modo');
-            const btnSimular = document.getElementById('btn_simular');
+        # Funciones para realizar los cálculos y mostrar el resultado
+        def mostrar_resultado(texto):
+            document.getElementById("resultado").innerText = texto
 
-            // Estilos inline forzados
-            btnCambiarModo.style.display = 'inline-block';
-            btnCambiarModo.style.backgroundColor = '#212121';
-            btnCambiarModo.style.border = '0.08em solid #fff';
-            btnCambiarModo.style.color = '#fff';
+        def convertir_float(valor):
+            try:
+                return float(valor)
+            except ValueError:
+                return None
 
-            btnSimular.style.display = 'inline-block';
-            btnSimular.style.backgroundColor = '#212121';
-            btnSimular.style.border = '0.08em solid #fff';
-            btnSimular.style.color = '#fff';
+        # Verifica que las velocidades tengan signos coherentes
+        def verificar_signos(v_inicial, v_final):
+            if v_inicial is not None and v_final is not None:
+                if (v_inicial > 0 and v_final < 0) or (v_inicial < 0 and v_final > 0):
+                    return False
+            return True
+
+        # Definición de las funciones de cálculo
+        def calcular_tiempo(event=None):
+            try:
+                v_final_str = document.getElementById("entry_vfinal").value
+                v_inicial_str = document.getElementById("entry_vinicial").value
+                aceleracion_str = document.getElementById("entry_aceleracion").value
+
+                # Intentar la conversión a float
+                v_final = convertir_float(v_final_str)
+                v_inicial = convertir_float(v_inicial_str)
+                aceleracion = convertir_float(aceleracion_str)
+
+                # Verificar si alguna conversión falló
+                if v_final is None or v_inicial is None or aceleracion is None:
+                    raise ValueError("Valores inválidos")
+                
+                # Verificar signos coherentes
+                if not verificar_signos(v_inicial, v_final):
+                    raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
+                
+                # Resetea la posición del GIF
+                window.resetearObjeto()
+
+                tiempo = abs((v_final - v_inicial) / aceleracion)
+                resultado = f"El tiempo necesario es: {tiempo} {'horas' if modo_horas else 'segundos'}"
+
+                # Calcular distancia
+                distancia = ((v_inicial + v_final) / 2) * tiempo
+                resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
+
+                # Mover el GIF según la distancia (ajustando desde el centro)
+                distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
+                window.moverObjeto(distancia_px)
+
+                mostrar_resultado(resultado)
+            except ValueError:
+                mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las velocidades tengan el mismo signo.")
+                
+        def calcular_aceleracion(event=None):
+            try:
+                v_final_str = document.getElementById("entry_vfinal").value
+                v_inicial_str = document.getElementById("entry_vinicial").value
+                tiempo_str = document.getElementById("entry_tiempo").value
+
+                # Intentar la conversión a float
+                v_final = convertir_float(v_final_str)
+                v_inicial = convertir_float(v_inicial_str)
+                tiempo = convertir_float(tiempo_str)
+
+                # Verificar si alguna conversión falló
+                if v_final is None or v_inicial is None or tiempo is None:
+                    raise ValueError("Valores inválidos")
+                
+                # Verificar signos coherentes
+                if not verificar_signos(v_inicial, v_final):
+                    raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
+                
+                # Resetea la posición del GIF
+                window.resetearObjeto()
+
+                aceleracion = (v_final - v_inicial) / tiempo
+                resultado = f"La aceleración necesaria es: {aceleracion} {'km/h²' if modo_horas else 'm/s²'}"
+
+                # Calcular distancia
+                distancia = ((v_inicial + v_final) / 2) * tiempo
+                resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
+                
+                # Mover el GIF según la distancia (ajustando desde el centro)
+                distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
+                window.moverObjeto(distancia_px)
+
+                mostrar_resultado(resultado)
+            except ValueError:
+                mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las velocidades tengan el mismo signo.")
+
+        def calcular_vfinal(event=None):
+            try:
+                v_inicial_str = document.getElementById("entry_vinicial").value
+                aceleracion_str = document.getElementById("entry_aceleracion").value
+                tiempo_str = document.getElementById("entry_tiempo").value
+
+                # Intentar la conversión a float
+                v_inicial = convertir_float(v_inicial_str)
+                aceleracion = convertir_float(aceleracion_str)
+                tiempo = convertir_float(tiempo_str)
+
+                # Verificar si alguna conversión falló
+                if v_inicial is None or aceleracion is None or tiempo is None:
+                    raise ValueError("Valores inválidos")
+                
+                # Resetea la posición del GIF
+                window.resetearObjeto()
+
+                v_final = v_inicial + (aceleracion * tiempo)
+
+                # Verificar signos coherentes
+                if not verificar_signos(v_inicial, v_final):
+                    raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
+                
+                resultado = f"La velocidad final es: {v_final} {'km/h' if modo_horas else 'm/s'}"
+
+                # Calcular distancia
+                distancia = ((v_inicial + v_final) / 2) * tiempo
+                resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
+                
+                # Mover el GIF según la distancia (ajustando desde el centro)
+                distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
+                window.moverObjeto(distancia_px)
+
+                mostrar_resultado(resultado)
+            except ValueError:
+                mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las entradas sean correctas.")
+
+        def calcular_vinicial(event=None):
+            try:
+                v_final_str = document.getElementById("entry_vfinal").value
+                aceleracion_str = document.getElementById("entry_aceleracion").value
+                tiempo_str = document.getElementById("entry_tiempo").value
+
+                # Intentar la conversión a float
+                v_final = convertir_float(v_final_str)
+                aceleracion = convertir_float(aceleracion_str)
+                tiempo = convertir_float(tiempo_str)
+
+                # Verificar si alguna conversión falló
+                if v_final is None or aceleracion is None or tiempo is None:
+                    raise ValueError("Valores inválidos")
+                
+                # Resetea la posición del GIF
+                window.resetearObjeto()
+
+                v_inicial = v_final - (aceleracion * tiempo)
+
+                # Verificar signos coherentes
+                if not verificar_signos(v_inicial, v_final):
+                    raise ValueError("Las velocidades inicial y final deben tener el mismo signo o ser cero.")
+                
+                resultado = f"La velocidad inicial es: {v_inicial} {'km/h' if modo_horas else 'm/s'}"
+
+                # Calcular distancia
+                distancia = ((v_inicial + v_final) / 2) * tiempo
+                resultado += f"\nLa distancia recorrida es: {distancia} {'km' if modo_horas else 'm'}"
+
+                # Mover el GIF según la distancia (ajustando desde el centro)
+                distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
+                window.moverObjeto(distancia_px)
+
+                mostrar_resultado(resultado)
+            except ValueError:
+                mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las entradas sean correctas.")
+
+        def calcular_con_distancia(event=None):
+            try:
+                v_final_str = document.getElementById("entry_vfinal").value
+                v_inicial_str = document.getElementById("entry_vinicial").value
+                aceleracion_str = document.getElementById("entry_aceleracion").value
+                tiempo_str = document.getElementById("entry_tiempo").value
+                distancia_str = document.getElementById("entry_distancia").value
+
+                # Intentar la conversión a float
+                v_final = convertir_float(v_final_str)
+                v_inicial = convertir_float(v_inicial_str)
+                aceleracion = convertir_float(aceleracion_str)
+                tiempo = convertir_float(tiempo_str)
+                distancia = convertir_float(distancia_str)
+
+                # Verificar si alguna conversión falló
+                if distancia is None or (v_inicial is None and v_final is None and aceleracion is None and tiempo is None):
+                    raise ValueError("Se requiere la distancia y al menos otro dato para calcular.")
+
+                resultado = ""
+                if tiempo is None:
+                    tiempo = abs((2 * distancia) / (v_inicial + v_final))
+                    resultado += f"Tiempo calculado: {tiempo} {'horas' if modo_horas else 'segundos'}\n"
+                if aceleracion is None:
+                    aceleracion = (v_final ** 2 - v_inicial ** 2) / (2 * distancia)
+                    resultado += f"Aceleración calculada: {aceleracion} {'km/h²' if modo_horas else 'm/s²'}\n"
+                if v_final is None:
+                    v_final = (v_inicial ** 2 + 2 * aceleracion * distancia) ** 0.5
+                    resultado += f"Velocidad final calculada: {v_final} {'km/h' if modo_horas else 'm/s'}\n"
+                if v_inicial is None:
+                    v_inicial = (v_final ** 2 - 2 * aceleracion * distancia) ** 0.5
+                    resultado += f"Velocidad inicial calculada: {v_inicial} {'km/h' if modo_horas else 'm/s'}\n"
+
+                # Resetea la posición del GIF
+                window.resetearObjeto()
+
+                # Mover el GIF según la distancia (ajustando desde el centro)
+                distancia_px = min(distancia * 10, 300)  # Escala la distancia a píxeles
+                window.moverObjeto(distancia_px)
+
+                mostrar_resultado(resultado)
+            except ValueError:
+                mostrar_resultado("Por favor, introduzca valores numéricos válidos y asegúrese de que las entradas sean correctas.")
+
+        # Crear proxies para los manejadores de eventos
+        cambiar_modo_proxy = create_proxy(cambiar_modo)
+        actualizar_campos_proxy = create_proxy(actualizar_campos)
+
+        # Asignar proxies a los eventos
+        document.getElementById("opcion_calculo").addEventListener("change", actualizar_campos_proxy)
+        document.getElementById("btn_cambiar_modo").addEventListener("click", cambiar_modo_proxy)
+
+        
+        # Inicializar la interfaz
+        actualizar_interfaz()
+        
+    </py-script>
+
+    <script>
+        function resetearObjeto() {
+            var objeto = document.getElementById('objeto');
+            objeto.style.left = '50%';
+            objeto.style.transform = 'translateX(-50%)';
         }
-        const ctxPosicion = document.getElementById('chartPosicion').getContext('2d');
-        const ctxVelocidad = document.getElementById('chartVelocidad').getContext('2d');
-        const ctxAceleracion = document.getElementById('chartAceleracion').getContext('2d');
 
-        // Función para generar las gráficas
-        function generarGraficas(tiempos, posiciones, velocidades, aceleraciones) {
-            new Chart(ctxPosicion, {
-                type: 'line',
-                data: {
-                    labels: tiempos,
-                    datasets: [{
-                        label: 'Posición vs Tiempo',
-                        data: posiciones,
-                        borderColor: 'red',
-                        borderWidth: 1,
-                        fill: false
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Tiempo'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Posición'
-                            }
-                        }
-                    }
-                }
-            });
-
-            new Chart(ctxVelocidad, {
-                type: 'line',
-                data: {
-                    labels: tiempos,
-                    datasets: [{
-                        label: 'Velocidad vs Tiempo',
-                        data: velocidades,
-                        borderColor: 'green',
-                        borderWidth: 1,
-                        fill: false
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Tiempo'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Velocidad'
-                            }
-                        }
-                    }
-                }
-            });
-
-            new Chart(ctxAceleracion, {
-                type: 'line',
-                data: {
-                    labels: tiempos,
-                    datasets: [{
-                        label: 'Aceleración vs Tiempo',
-                        data: aceleraciones,
-                        borderColor: 'blue',
-                        borderWidth: 1,
-                        fill: false
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Tiempo'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Aceleración'
-                            }
-                        }
-                    }
-                }
-            });
+        function moverObjeto(distancia) {
+            var objeto = document.getElementById('objeto');
+            // Ajuste desde el centro (origen en el centro)
+            var contenedor = document.getElementById('simulacion');
+            var centro = contenedor.offsetWidth / 2;
+            var nuevaPosicion = centro + distancia;
+            objeto.style.left = nuevaPosicion + 'px';
         }
+        
+        function aplicarEstilosBotones() {
+        const btnCambiarModo = document.getElementById('btn_cambiar_modo');
+        const btnSimular = document.getElementById('btn_simular');
 
-        // Simulación de datos
-        function simularDatos() {
-            const tiempos = [];
-            const posiciones = [];
-            const velocidades = [];
-            const aceleraciones = [];
+        // Estilos inline forzados
+        btnCambiarModo.style.display = 'inline-block';
+        btnCambiarModo.style.backgroundColor = '#212121';
+        btnCambiarModo.style.border = '0.08em solid #fff';
+        btnCambiarModo.style.color = '#fff';
 
-            const v_inicial = parseFloat(document.getElementById("entry_vinicial").value);
-            const v_final = parseFloat(document.getElementById("entry_vfinal").value);
-            const aceleracion = parseFloat(document.getElementById("entry_aceleracion").value);
-            const tiempo_total = parseFloat(document.getElementById("entry_tiempo").value);
+        btnSimular.style.display = 'inline-block';
+        btnSimular.style.backgroundColor = '#212121';
+        btnSimular.style.border = '0.08em solid #fff';
+        btnSimular.style.color = '#fff';
+    }
+    
+    const ctxPosicion = document.getElementById('chartPosicion').getContext('2d');
+const ctxVelocidad = document.getElementById('chartVelocidad').getContext('2d');
+const ctxAceleracion = document.getElementById('chartAceleracion').getContext('2d');
 
-            for (let t = 0; t <= tiempo_total; t += tiempo_total / 20) {
-                tiempos.push(t);
-                posiciones.push(v_inicial * t + 0.5 * aceleracion * t * t);
-                velocidades.push(v_inicial + aceleracion * t);
-                aceleraciones.push(aceleracion);
+// Función para generar las gráficas
+function generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distancia) {
+    console.log("Tiempo Total:", tiempo_total);
+    console.log("Velocidad Inicial:", v_inicial);
+    console.log("Velocidad Final:", v_final);
+    console.log("Aceleración:", aceleracion);
+    console.log("Distancia:", distancia);
+
+    // Verificación de NaN
+    if (isNaN(tiempo_total) || isNaN(v_inicial) || isNaN(v_final) || isNaN(aceleracion) || isNaN(distancia)) {
+        console.error('Uno o más valores son NaN, revise las entradas.');
+        return;
+    }
+
+    // Gráfica de Velocidad vs Tiempo
+    const tiemposVelocidad = [0, tiempo_total];
+    const velocidades = [v_inicial, v_final];
+
+    new Chart(ctxVelocidad, {
+        type: 'line',
+        data: {
+            labels: tiemposVelocidad,
+            datasets: [{
+                label: 'Velocidad vs Tiempo',
+                data: velocidades,
+                borderColor: 'green',
+                borderWidth: 2,
+                fill: false,
+                tension: 0 // Línea recta
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tiempo'
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: tiempo_total
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Velocidad'
+                    },
+                    suggestedMin: Math.min(v_inicial, v_final),
+                    suggestedMax: Math.max(v_inicial, v_final)
+                }
             }
-
-            generarGraficas(tiempos, posiciones, velocidades, aceleraciones);
         }
+    });
 
-        // Evento para el botón de simulación
-        document.getElementById('btn_simular').addEventListener('click', simularDatos);
+    // Gráfica de Aceleración vs Tiempo
+    const tiemposAceleracion = [0, tiempo_total];
+    const aceleraciones = [aceleracion, aceleracion];
 
-            // Llama a la función después de que la página y PyScript hayan cargado
-            window.addEventListener('load', aplicarEstilosBotones);
-        </script>       
-    </body>
-    </html>
+    new Chart(ctxAceleracion, {
+        type: 'line',
+        data: {
+            labels: tiemposAceleracion,
+            datasets: [{
+                label: 'Aceleración vs Tiempo',
+                data: aceleraciones,
+                borderColor: 'blue',
+                borderWidth: 2,
+                fill: false,
+                tension: 0 // Línea recta
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tiempo'
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: tiempo_total
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Aceleración'
+                    },
+                    suggestedMin: aceleracion - 1, // Ajuste mínimo y máximo para asegurar que se vea la línea
+                    suggestedMax: aceleracion + 1
+                }
+            }
+        }
+    });
+
+    // Gráfica de Posición vs Tiempo
+    const tiemposPosicion = [0, tiempo_total];
+    const posiciones = [0, distancia];
+
+    new Chart(ctxPosicion, {
+        type: 'line',
+        data: {
+            labels: tiemposPosicion,
+            datasets: [{
+                label: 'Posición vs Tiempo',
+                data: posiciones,
+                borderColor: 'red',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4 // Línea curva para representar la tendencia exponencial
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tiempo'
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: tiempo_total
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Posición'
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: distancia
+                }
+            }
+        }
+    });
+}
+
+// Función para calcular y actualizar los valores
+function actualizarValores() {
+    let v_inicial = parseFloat(document.getElementById("entry_vinicial").value);
+    let v_final = parseFloat(document.getElementById("entry_vfinal").value);
+    let aceleracion = parseFloat(document.getElementById("entry_aceleracion").value);
+    let tiempo_total = parseFloat(document.getElementById("entry_tiempo").value);
+    let distancia = parseFloat(document.getElementById("entry_distancia").value);
+
+    // Calcular tiempo si no se ha proporcionado
+    if (isNaN(tiempo_total)) {
+        if (!isNaN(v_inicial) && !isNaN(v_final) && !isNaN(aceleracion)) {
+            tiempo_total = Math.abs((v_final - v_inicial) / aceleracion);
+            document.getElementById("entry_tiempo").value = tiempo_total.toFixed(2);
+        }
+    }
+
+    // Calcular distancia si no se ha proporcionado
+    if (isNaN(distancia)) {
+        if (!isNaN(v_inicial) && !isNaN(v_final) && !isNaN(tiempo_total)) {
+            distancia = ((v_inicial + v_final) / 2) * tiempo_total;
+            document.getElementById("entry_distancia").value = distancia.toFixed(2);
+        }
+    }
+
+    // Ahora, todos los valores deben estar actualizados o calculados
+    generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distancia);
+}
+
+// Evento para el botón de simulación
+document.getElementById('btn_simular').addEventListener('click', actualizarValores);
+
+
+        // Llama a la función después de que la página y PyScript hayan cargado
+        window.addEventListener('load', aplicarEstilosBotones);
+    </script>       
+</body>
+</html>
