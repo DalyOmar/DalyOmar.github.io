@@ -117,8 +117,7 @@ function generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distanci
 
     for (let t = 0; t <= tiempo_total; t += tiempo_total / 20) {
         tiemposPosicion.push(t);
-        // Aquí usamos una función exponencial simple para simular la tendencia
-        posiciones.push(Math.exp(t)); // Suponemos una función de tipo y = e^t para ejemplo
+        posiciones.push(Math.exp(t)); // Función exponencial para la gráfica de posición
     }
 
     chartPosicion = new Chart(ctxPosicion, {
@@ -164,29 +163,38 @@ function actualizarValores() {
     let tiempo_total = parseFloat(document.getElementById("entry_tiempo").value);
     let distancia = parseFloat(document.getElementById("entry_distancia").value);
 
-    // Calcular tiempo si no se ha proporcionado
-    if (isNaN(tiempo_total)) {
-        if (!isNaN(v_inicial) && !isNaN(v_final) && !isNaN(aceleracion)) {
-            tiempo_total = Math.abs((v_final - v_inicial) / aceleracion);
-            document.getElementById("entry_tiempo").value = tiempo_total.toFixed(2);
-        }
+    // Calcular los valores faltantes si es necesario
+    if (isNaN(tiempo_total) && !isNaN(v_inicial) && !isNaN(v_final) && !isNaN(aceleracion)) {
+        tiempo_total = Math.abs((v_final - v_inicial) / aceleracion);
+        document.getElementById("entry_tiempo").value = tiempo_total.toFixed(2);
     }
 
-    // Calcular distancia si no se ha proporcionado
-    if (isNaN(distancia)) {
-        if (!isNaN(v_inicial) && !isNaN(v_final) && !isNaN(tiempo_total)) {
-            distancia = ((v_inicial + v_final) / 2) * tiempo_total;
-            document.getElementById("entry_distancia").value = distancia.toFixed(2);
-        }
+    if (isNaN(distancia) && !isNaN(v_inicial) && !isNaN(v_final) && !isNaN(tiempo_total)) {
+        distancia = ((v_inicial + v_final) / 2) * tiempo_total;
+        document.getElementById("entry_distancia").value = distancia.toFixed(2);
     }
 
-    // Ahora, todos los valores deben estar actualizados o calculados
+    if (isNaN(v_inicial) && !isNaN(v_final) && !isNaN(aceleracion) && !isNaN(tiempo_total)) {
+        v_inicial = v_final - (aceleracion * tiempo_total);
+        document.getElementById("entry_vinicial").value = v_inicial.toFixed(2);
+    }
+
+    if (isNaN(v_final) && !isNaN(v_inicial) && !isNaN(aceleracion) && !isNaN(tiempo_total)) {
+        v_final = v_inicial + (aceleracion * tiempo_total);
+        document.getElementById("entry_vfinal").value = v_final.toFixed(2);
+    }
+
+    if (isNaN(aceleracion) && !isNaN(v_inicial) && !isNaN(v_final) && !isNaN(tiempo_total)) {
+        aceleracion = (v_final - v_inicial) / tiempo_total;
+        document.getElementById("entry_aceleracion").value = aceleracion.toFixed(2);
+    }
+
+    // Genera las gráficas con los valores actualizados o calculados
     generarGraficas(tiempo_total, v_inicial, v_final, aceleracion, distancia);
 }
 
 function cambiarModo() {
     // Lógica para cambiar el modo (ejemplo: de km/h a m/s)
-    // Aquí también se puede resetear la interfaz y las gráficas
     actualizarInterfaz(); // Asegura que los valores de los campos se ajusten al nuevo modo
     actualizarValores(); // Calcula los valores y genera las gráficas en el nuevo modo
 }
