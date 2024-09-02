@@ -1,3 +1,4 @@
+//Todo el codigo de Python se movio al PyScript por Omar Vega a HTML
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
