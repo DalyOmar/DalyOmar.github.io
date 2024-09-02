@@ -1,20 +1,24 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
+<!DOCTYPE html> 
+<html lang="es"> 
+<head> 
+    <meta charset="UTF-8"> 
     <script defer src="script.js"></script>
     <script defer src="reiniciarGraficas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <div class="centered-text">
-        <h1>Simulación de MRUV</h1>
+        <h1>Simulación de MRUV</h1> 
     </div>
-    <link rel="stylesheet" href="marco.css">
+    <link rel="stylesheet" href="marco.css"> 
     <link rel="stylesheet" href="boton.css">
     <link rel="stylesheet" href="fuente.css">
-    <style type="text/css">
-        
+     
+    <style type="text/css"> 
+        .texto-rojo-grande { 
+            color: red; 
+            font-size: 24px; /* Puedes ajustar el tamaño según necesites */
+        }
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -69,7 +73,7 @@
         canvas {
             width: 100%;
             border: 1px solid black;
-            background: gray;
+            background: rgb(255, 255, 255);
             margin: 20px;
         }
         #objeto {
@@ -109,8 +113,39 @@
     </style>
 </head>
 <body>
+    <h3 style="color: cyan;">Ver Instrucciones</h3>
+
+
+<details>
+    <summary>Haz clic aquí para ver las instrucciones</summary>
+    <p style="margin-top: 10px;">Bienvenidos a este simulador de movimiento rectilíneo uniformemente variado.</p>
+    <p style="margin-top: 10px">En el menú desplegable, puedes seleccionar las opciones de cálculo disponibles, que incluyen: 
+        Tiempo, Aceleración, Velocidad Final, Velocidad Inicial y Distancia. Una vez seleccionada una opción, 
+        se habilitarán al menos 3 campos de texto en los que solo se deben ingresar valores numéricos, tanto enteros 
+        como decimales. Los valores decimales deben ser introducidos utilizando un punto (.) y no una coma (,). 
+        De lo contrario, aparecerá una advertencia bajo la simulación.</p>
+    <p style="margin-top: 10px">Después de completar los campos de texto, haz clic en el botón "Iniciar Simulación". El objeto situado en la 
+        zona derecha comenzará a moverse según los parámetros introducidos.</p>
+    <p style="margin-top: 10px">Los valores aceptados deben tener en cuenta que si la velocidad inicial es positiva, la velocidad final también debe 
+        ser positiva, y si la velocidad inicial es negativa, la velocidad final también debe ser negativa. Esto no se aplica 
+        si la velocidad inicial o final es cero.</p>
+    <p style="margin-top: 10px">Al iniciar la simulación, se generarán y visualizarán automáticamente tres gráficos que no estaban cargados previamente. 
+        Estos gráficos se actualizan con los datos de la simulación.</p>
+    <p style="margin-top: 10px">Es posible alternar entre el modo de horas y segundos, lo que causará un ajuste automático en la escala de kilómetros a metros.</p>
+    <p class="texto-rojo-grande" style="margin-top: 10px">Errores conocidos:</p>
+    <p style="margin-top: 10px">Dado que este simulador está creado utilizando el lenguaje y la librería PyScript, pueden surgir errores ocasionales debido a 
+        la naturaleza relativamente nueva de esta sintaxis, que permite ejecutar Python de manera casi nativa en HTML. 
+        Para obtener más información sobre PyScript y sus limitaciones, puedes visitar el siguiente enlace: 
+        <a href="https://docs.pyscript.net/2024.8.2/">Documentación de PyScript</a>.</p>
+    <p style="margin-top: 10px">Al generar un gráfico durante el cálculo del tiempo, es posible que el resultado se quede bloqueado en el cuadro de texto, 
+        lo que puede impedir la interacción con él. Esto no ocurre en otras opciones de cálculo.</p>
+    <p style="margin-top: 10px">En dispositivos móviles, la visualización puede verse considerablemente afectada, por lo que se recomienda utilizar 
+        una computadora de escritorio o laptop.</p>
+    <p style="margin-top: 10px">En caso de colapso al calcular o simular, se recomienda encarecidamente reiniciar la página.</p>
+</details>
+
     
-    <h2>Simulación de Movimiento</h2>
+    <h2 style="margin-top: 20px;">Simulación de Movimiento</h2>
     <!-- Menú desplegable para seleccionar el cálculo -->
     <label for="opcion_calculo">Seleccione un cálculo:</label>
     <select id="opcion_calculo">
@@ -155,11 +190,18 @@
     </div>
     <!-- Div para mostrar el resultado -->
     <div id="resultado"></div>
+
+    <h2>Graficas de MRUV</h2>
+
     <div class="chart-container">
         <canvas id="chartPosicion"></canvas>
         <canvas id="chartVelocidad"></canvas>
         <canvas id="chartAceleracion"></canvas>
     </div>
+
+    <p style="margin-top: 250px;">Programado con Visual Studio Code</p>
+    <p>Programa de Codigo abierto respositorio en GitHub https://github.com/DalyOmar/DalyOmar.github.io/tree/main </p>
+    <p>Versión V1.0</p>
     <py-script>
         from js import document, window
         from pyodide import create_proxy
